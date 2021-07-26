@@ -1,17 +1,16 @@
 package com.demo.demo.rest;
 
-import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.stream.Collectors;
 
+import com.demo.demo.rest.model.Customer;
+import com.demo.demo.rest.model.EnrollmentResult;
+import com.demo.demo.rest.model.Insurance;
 import com.fasterxml.jackson.databind.ObjectMapper;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
-
-import lombok.Getter;
-import lombok.Setter;
 
 /**
  * Enrollment class for handling the input format of a given CSV file
@@ -23,7 +22,6 @@ import lombok.Setter;
 public class EnrollmentService {
     @Autowired
     ObjectMapper objectMapper;
-    private HashMap<String, Insurance> map = new HashMap<>();
 
     /**
      * Formats the contents of a CSV file and separates customers based on
@@ -39,18 +37,20 @@ public class EnrollmentService {
      * 
      * 
      * @param file List<List<String>> file object that represents the structure of theimported CSV file
-     * @return List<List<Customer>> object where each sub list contains a list of Customer objects
-     *         that have the same insurance
+     * @return List<List<Customer>> sorted, where each sub list contains 
+     *         a list of sorted Customer objects that have the same insurance
      */
-    public List<Result> enroll(List<List<String>> file) {
+    public List<EnrollmentResult> enroll(List<List<String>> file) throws Exception {
         if (file == null) {
-            throw new IllegalArgumentException();
+            throw new IllegalArgumentException("Enrollment file is required.");
         }
 
+        HashMap<String, Insurance> map = new HashMap<>();
+
         // row format - id, first & last, version, insurance
-        for(List<String> row : file) {
+        for (List<String> row : file) {
             if (row == null || row.size() != 4) {
-                break;
+                throw new Exception("Enrollment file contains incorrect format.");
             }
 
             Insurance insurance = map.get(row.get(3));
@@ -73,44 +73,7 @@ public class EnrollmentService {
 
         return map.values()
             .stream()
-            .map(m -> new Result(m))
+            .map(m -> new EnrollmentResult(m))
             .collect(Collectors.toList());
-    }
-
-    @Getter
-    @Setter
-    public class Result {
-        private List<Customer> customers;
-        private String insurance;
-        public Result(Insurance insurance) {
-            this.customers = new ArrayList<>(insurance.getCustomers().values());
-            this.insurance = insurance.getInsurance();
-        }
-    }
-
-    @Getter
-    @Setter
-    public class Insurance {
-        private String insurance;
-        private HashMap<String, Customer> customers;
-        public Insurance(List<String> row) {
-            this.insurance = row.get(3);
-            this.customers = new HashMap<>();
-        }
-    }
-
-    @Getter
-    @Setter
-    public class Customer {
-        private String id;
-        private int version;
-        private String firstAndLastName;
-        private String insurance;
-        public Customer(List<String> customerInfo) {
-            this.id = customerInfo.get(0);
-            this.firstAndLastName = customerInfo.get(1);
-            this.version = Integer.parseInt(customerInfo.get(2));
-            this.insurance = customerInfo.get(3);
-        }
     }
 }

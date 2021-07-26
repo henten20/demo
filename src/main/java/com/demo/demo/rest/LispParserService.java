@@ -1,4 +1,4 @@
-package com.demo.demo;
+package com.demo.demo.rest;
 
 import java.util.Stack;
 
@@ -11,8 +11,12 @@ import org.springframework.stereotype.Service;
  * @since 0.0.1
  */
 @Service
-public class LispParser {
+public class LispParserService {
     public boolean parseLisp(String lisp) {
+        if (lisp == null) {
+            throw new IllegalArgumentException("LISP input is required.");
+        }
+
         Stack<Character> stack = new Stack<>();
         char [] chars = lisp.toCharArray();
 

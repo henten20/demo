@@ -1,49 +1,42 @@
 package com.demo.demo.rest;
-import java.util.HashMap;
+import java.util.Collections;
 import java.util.List;
 import java.util.Optional;
-import java.util.Set;
 import java.util.UUID;
-import java.util.Map.Entry;
 
-import com.demo.demo.LispParser;
 import com.demo.demo.model.User;
 import com.demo.demo.repository.UserRepository;
-import com.demo.demo.rest.EnrollmentService.Customer;
-import com.demo.demo.rest.EnrollmentService.Insurance;
-import com.demo.demo.rest.EnrollmentService.Result;
+import com.demo.demo.rest.model.EnrollmentResult;
+import com.demo.demo.rest.model.UserInput;
 import com.fasterxml.jackson.core.JsonProcessingException;
-import com.fasterxml.jackson.databind.ObjectMapper;
 
 import org.springframework.boot.autoconfigure.EnableAutoConfiguration;
-import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
-import org.springframework.web.servlet.ModelAndView;
 
 import lombok.extern.slf4j.Slf4j;
 
+/**
+ * Demo controller
+ * 
+ * @author Henry Ton
+ * @since 0.0.1
+ */
 @Slf4j
 @RestController
 @EnableAutoConfiguration
 public class DemoController {
-    private final LispParser lispParser;
+    private final LispParserService lispParserService;
     private final EnrollmentService enrollmentService;
     private final UserRepository userRepository;
 
-    public DemoController(EnrollmentService enrollmentService, LispParser lispParser, UserRepository userRepository) {
-        this.lispParser = lispParser;
+    public DemoController(EnrollmentService enrollmentService, LispParserService lispParser, UserRepository userRepository) {
+        this.lispParserService = lispParser;
         this.enrollmentService = enrollmentService;
         this.userRepository = userRepository;
-    }
-
-    @RequestMapping("/")
-    public ModelAndView home(Model model) {
-        return new ModelAndView("index.html");
     }
 
     @PostMapping("/register")
@@ -73,17 +66,20 @@ public class DemoController {
     }
 
     @GetMapping("/user")
-    public User getUser(@RequestParam UUID id) {
+    public User getUser(@RequestParam UUID id) throws Exception {
         return userRepository.findById(id).get();
     }
 
     @PostMapping("/enroll")
-    public List<Result> enroll(@RequestBody List<List<String>> csvFile) throws JsonProcessingException {
-        return enrollmentService.enroll(csvFile);
+    public List<EnrollmentResult> enroll(@RequestBody List<List<String>> csvFile) throws Exception, JsonProcessingException {
+        List<EnrollmentResult> result = enrollmentService.enroll(csvFile);
+        Collections.sort(result, 
+            (a, b) -> a.getInsurance().compareToIgnoreCase(b.getInsurance()));
+         return result;
     }
 
     @PostMapping("/parse")
-    public boolean parse(@RequestBody String lisp) {
-        return lispParser.parseLisp(lisp);
+    public boolean parse(@RequestBody String lisp) throws Exception {
+        return lispParserService.parseLisp(lisp);
     }
 }
