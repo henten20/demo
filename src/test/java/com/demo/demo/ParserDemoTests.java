@@ -1,6 +1,6 @@
 package com.demo.demo;
 
-import com.fasterxml.jackson.databind.ObjectMapper;
+import com.demo.demo.rest.LispParserService;
 
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -12,16 +12,20 @@ import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.request.MockMvcRequestBuilders;
 import org.springframework.test.web.servlet.result.MockMvcResultMatchers;
 
+/**
+ * LISP Parser tests
+ * 
+ * @author Henry Ton
+ * @since 0.0.1
+ */
 @SpringBootTest
 @ExtendWith(SpringExtension.class)
 @AutoConfigureMockMvc(addFilters = false)
 class ParserDemoTests {
 	@Autowired
-	LispParser lispParser;
-	@Autowired
-	MockMvc mockMvc;
-	@Autowired ObjectMapper objectMapper;
+	private MockMvc mockMvc;
 
+    private String lisp0 = "";
     private String lisp1 = "()";
     private String lisp2 = "())";
     private String lisp3 = "(defun csg-intersection-intersect-all (obj-a obj-b) " 
@@ -39,9 +43,24 @@ class ParserDemoTests {
         + "     (remove-if-not (inside-p obj-b) (intersect-all obj-a ray))" 
         + "       (remove-if-not (inside-p obj-a) (intersect-all obj-b ray)) "
         + "      #'<)))";
+
         
 	@Test
-    void parserPassesTest1() throws Exception {
+	void contextLoads() {
+
+	}
+
+    @Test
+    void parserTest0() throws Exception {
+        mockMvc.perform(MockMvcRequestBuilders
+			.post("/parse")
+			.contentType("application/json")
+			.param("lisp", lisp0))
+			.andExpect(MockMvcResultMatchers.status().isBadRequest());
+    }
+    
+	@Test
+    void parserTest1() throws Exception {
         mockMvc.perform(MockMvcRequestBuilders
 			.post("/parse")
 			.contentType("application/json")
@@ -51,7 +70,7 @@ class ParserDemoTests {
     }
 
     @Test
-    void parserPassesTest2() throws Exception {
+    void parserTest2() throws Exception {
         mockMvc.perform(MockMvcRequestBuilders
 			.post("/parse")
 			.contentType("application/json")
@@ -61,7 +80,7 @@ class ParserDemoTests {
     }
 
     @Test
-    void parserPassesTest3() throws Exception {
+    void parserTest3() throws Exception {
         mockMvc.perform(MockMvcRequestBuilders
 			.post("/parse")
 			.contentType("application/json")
@@ -71,7 +90,7 @@ class ParserDemoTests {
     }
 
     @Test
-    void parserPassesTest4() throws Exception {
+    void parserTest4() throws Exception {
         mockMvc.perform(MockMvcRequestBuilders
 			.post("/parse")
 			.contentType("application/json")

@@ -19,6 +19,12 @@ import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.request.MockMvcRequestBuilders;
 import org.springframework.test.web.servlet.result.MockMvcResultMatchers;
 
+/**
+ * User registration tests
+ * 
+ * @author Henry Ton
+ * @since 0.0.1
+ */
 @SpringBootTest
 @ExtendWith(SpringExtension.class)
 @AutoConfigureMockMvc(addFilters = false)
