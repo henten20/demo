@@ -55,7 +55,7 @@ class ParserDemoTests {
         mockMvc.perform(MockMvcRequestBuilders
 			.post("/parse")
 			.contentType("application/json")
-			.param("lisp", lisp0))
+			.content(lisp0))
 			.andExpect(MockMvcResultMatchers.status().isBadRequest());
     }
     
@@ -64,7 +64,7 @@ class ParserDemoTests {
         mockMvc.perform(MockMvcRequestBuilders
 			.post("/parse")
 			.contentType("application/json")
-			.param("lisp", lisp1))
+			.content(lisp1))
 			.andExpect(MockMvcResultMatchers.status().isOk())
             .andExpect(MockMvcResultMatchers.content().string("true"));
     }
@@ -74,7 +74,7 @@ class ParserDemoTests {
         mockMvc.perform(MockMvcRequestBuilders
 			.post("/parse")
 			.contentType("application/json")
-			.param("lisp", lisp2))
+			.content(lisp2))
 			.andExpect(MockMvcResultMatchers.status().isOk())
             .andExpect(MockMvcResultMatchers.content().string("false"));
     }
@@ -84,7 +84,7 @@ class ParserDemoTests {
         mockMvc.perform(MockMvcRequestBuilders
 			.post("/parse")
 			.contentType("application/json")
-			.param("lisp", lisp3))
+			.content(lisp3))
 			.andExpect(MockMvcResultMatchers.status().isOk())
             .andExpect(MockMvcResultMatchers.content().string("true"));
     }
@@ -94,7 +94,7 @@ class ParserDemoTests {
         mockMvc.perform(MockMvcRequestBuilders
 			.post("/parse")
 			.contentType("application/json")
-			.param("lisp", lisp4))
+			.content(lisp4))
 			.andExpect(MockMvcResultMatchers.status().isOk())
             .andExpect(MockMvcResultMatchers.content().string("false"));
     }
